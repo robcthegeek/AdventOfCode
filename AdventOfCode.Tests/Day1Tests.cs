@@ -31,6 +31,7 @@ namespace AdventOfCode.Tests
             Console.WriteLine(result);
 
             Assert.True(result > 0);
+            Assert.Equal(3481005, result);
         }
 
         [Theory]
@@ -53,6 +54,7 @@ namespace AdventOfCode.Tests
             Console.WriteLine(result);
 
             Assert.True(result > 0);
+            Assert.Equal(5218616, result);
         }
     }
 
