@@ -40,7 +40,7 @@ namespace AdventOfCode.Tests
         [Fact]
         public void can_solve_puzzle()
         {
-            var input = Day2.Parse(Input.Day(2, 1));
+            var input = Day2.Parse(Input.Day(2));
 
             /* before running the program,
              - replace position 1 with the value 12 and
@@ -59,7 +59,7 @@ namespace AdventOfCode.Tests
         [Fact]
         public void can_solve_part2()
         {
-            var input = Day2.Parse(Input.Day(2, 1));
+            var input = Day2.Parse(Input.Day(2));
             var (noun, verb) = Day2.GetNounVerbForResult(input, 19690720);
             var answer = 100 * noun + verb;
             Console.WriteLine($"100 * {noun} + {verb} = {answer}");

@@ -22,7 +22,7 @@ namespace AdventOfCode.Tests
         public void can_solve_part_one()
         {
             var result = Input
-                .Ints(1, 1)
+                .Ints(1)
                 .Select(Day1.FuelRequired)
                 .Sum();
             
@@ -45,7 +45,7 @@ namespace AdventOfCode.Tests
         [Fact]
         public void can_solve_part_two()
         {
-            var result = Input.Ints(1, 1)
+            var result = Input.Ints(1)
                 .Select(Day1.TotalFuelRequired)
                 .Sum();
 
