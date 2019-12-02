@@ -55,5 +55,18 @@ namespace AdventOfCode.Tests
             Console.WriteLine(result[0]);
             Assert.Equal(3760627, result[0]);
         }
+
+        [Fact]
+        public void can_solve_part2()
+        {
+            var input = Day2.Parse(Input.Day(2, 1));
+            var (noun, verb) = Day2.GetNounVerbForResult(input, 19690720);
+            var answer = 100 * noun + verb;
+            Console.WriteLine($"100 * {noun} + {verb} = {answer}");
+
+            Assert.True(noun > 0);
+            Assert.True(verb > 0);
+            Assert.Equal(7195, answer);
+        }
     }
 }

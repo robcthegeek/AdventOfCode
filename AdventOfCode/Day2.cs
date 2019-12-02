@@ -43,5 +43,26 @@ namespace AdventOfCode
 
             return program;
         }
+
+        public static (int noun, int verb) GetNounVerbForResult(int[] input, int desiredResult)
+        {
+            for (var noun = 0; noun <= 99; noun++)
+            {
+                for (var verb = 0; verb <= 99; verb++)
+                {
+                    var copy = new int[input.Length];
+                    Array.Copy(input, copy, input.Length);
+
+                    copy[1] = noun;
+                    copy[2] = verb;
+
+                    var result = Execute(copy);
+
+                    if (result[0] == desiredResult) return (noun, verb);
+                }
+            }
+
+            return (-1, -1);
+        }
     }
 }
