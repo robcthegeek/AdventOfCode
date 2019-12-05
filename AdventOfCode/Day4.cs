@@ -24,9 +24,42 @@ namespace AdventOfCode
             return true;
         }
 
+        public static bool IsValidPartDeux(int passcode)
+        {
+            var digits = passcode.ToString().ToCharArray();
+            if (digits.Length != 6) return false;
+
+            var hasPair = false;
+            var previous = digits[0];
+            var count = 1;
+            for (var i = 1; i < digits.Length; i++)
+            {
+                if (digits[i - 1] > digits[i]) return false;
+
+                if (previous == digits[i])
+                    count++;
+                else
+                {
+                    if (count == 2) hasPair = true;
+
+                    count = 1;
+                    previous = digits[i];
+                }
+            }
+
+            if (count == 2) hasPair = true;
+
+            return hasPair;
+        }
+
         public static int ValidInRange(int start, int end) =>
-            Enumerable
-                .Range(start, end - start + 1)
-                .Count(IsValid);
+        Enumerable
+            .Range(start, end - start + 1)
+            .Count(IsValid);
+
+        public static int ValidInRangePartDeux(int start, int end) =>
+        Enumerable
+            .Range(start, end - start + 1)
+            .Count(IsValidPartDeux);
     }
 }
