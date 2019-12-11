@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Xunit;
 
@@ -30,19 +29,20 @@ namespace AdventOfCode.Tests
         }
 
         [Fact]
-        public void opcode_3_saves_value_then_halts()
+        public void opcode_3_takes_input_value_then_halts()
         {
-            var input = "3,2,1,1,1,5,99"; // => "3,2,2,1,1,4,99" (save 2 in address 2, 2*2 from add 1 = 4, save to 5)
-            Assert.Equal(new[] { 3, 2, 2, 1, 1, 4, 99 }, Day5.Execute(input));
+            var program = "3,2,0,99"; // => "3,2,99,99"
+            var input = new Queue<int>(new [] { 99 });
+            Assert.Equal(new[] { 3, 2, 99, 99 }, Day5.Execute(program, input));
         }
 
         [Fact]
         public void opcode_4_outputs_value_then_halts()
         {
-            var input = "4,0,99"; // => outputs '4' from address 0
-            var output = new List<string>();
-            Day5.Execute(input, output);
-            Assert.Contains("4", output);
+            var program = "4,0,99"; // => outputs '4' from address 0
+            var output = new List<int>();
+            Day5.Execute(program, null, output);
+            Assert.Contains(4, output);
         }
 
         [Theory]
@@ -53,36 +53,25 @@ namespace AdventOfCode.Tests
             Assert.Equal(expected, Day5.Execute(input));
         }
 
-        //[Fact]
-        //public void can_solve_puzzle()
-        //{
-        //    var input = Day5.Parse(Input.Day(2));
+        [Theory]
+        [InlineData("1002,4,3,4,33", 1002, 4, 3, 4, 99)] // => 2,3,0,6,99 (33 * 3 = 99)
+        public void handles_immediate_mode(string input, params int[] expected)
+        {
+            Assert.Equal(expected, Day5.Execute(input));
+        }
 
-        //    /* before running the program,
-        //     - replace position 1 with the value 12 and
-        //     - replace position 2 with the value 2. What value is left at position 0 
-        //     after the program halts?
-        //     */
+        [Fact]
+        public void can_solve_puzzle()
+        {
+            var program = Day5.Parse(Input.Day(5));
 
-        //    input[1] = 12;
-        //    input[2] = 2;
-        //    var result = Day5.Execute(input);
+            var input = new Queue<int>(new[] { 1 });
+            var output = new List<int>();
+            
+            var result = Day5.Execute(program, input, output);
 
-        //    Console.WriteLine(result[0]);
-        //    Assert.Equal(3760627, result[0]);
-        //}
-
-        //[Fact]
-        //public void can_solve_part2()
-        //{
-        //    var input = Day5.Parse(Input.Day(2));
-        //    var (noun, verb) = Day5.GetNounVerbForResult(input, 19690720);
-        //    var answer = 100 * noun + verb;
-        //    Console.WriteLine($"100 * {noun} + {verb} = {answer}");
-
-        //    Assert.True(noun > 0);
-        //    Assert.True(verb > 0);
-        //    Assert.Equal(7195, answer);
-        //}
+            output.ForEach(Console.WriteLine);
+            Assert.Equal(9938601, output.Last());
+        }
     }
 }
