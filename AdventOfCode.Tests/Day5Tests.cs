@@ -60,18 +60,77 @@ namespace AdventOfCode.Tests
             Assert.Equal(expected, Day5.Execute(input));
         }
 
+        [Theory]
+        [InlineData("3,9,8,9,10,9,4,9,99,-1,8", 8, 1)]  // pos mode, equal
+        [InlineData("3,9,8,9,10,9,4,9,99,-1,8", 9, 0)]  // pos mode, equal
+        [InlineData("3,3,1108,-1,8,3,4,3,99", 8, 1)]    // immediate mode, equal
+        [InlineData("3,3,1108,-1,8,3,4,3,99", 9, 0)]    // immediate mode, equal
+        [InlineData("3,9,7,9,10,9,4,9,99,-1,8", 8, 0)]  // pos mode, less than
+        [InlineData("3,9,7,9,10,9,4,9,99,-1,9", 8, 1)]  // pos mode, less than
+        [InlineData("3,3,1107,-1,8,3,4,3,99", 8, 0)]    // immediate mode, less than
+        [InlineData("3,3,1107,-1,9,3,4,3,99", 8, 1)]    // immediate mode, less than
+        public void handles_comparison_samples(string program, int input, int expOutput)
+        {
+            var output = new List<int>();
+
+            Day5.Execute(program, new Queue<int>(new[] { input }), output);
+
+            Assert.Equal(expOutput, output.Last());
+        }
+
+        [Theory]
+        [InlineData("3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9", 0, 0)]  // position mode
+        [InlineData("3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9", 42, 1)] // position mode
+        [InlineData("3,3,1105,-1,9,1101,0,0,12,4,12,99,1", 0, 0)]       // immediate mode
+        [InlineData("3,3,1105,-1,9,1101,0,0,12,4,12,99,1", 42, 1)]      // immediate mode
+        public void handles_jump_to_samples(string program, int input, int expOutput)
+        {
+            var output = new List<int>();
+
+            Day5.Execute(program, new Queue<int>(new[] { input }), output);
+
+            Assert.Equal(expOutput, output.Last());
+        }
+
+        [Theory]
+        [InlineData("3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106, 0, 36, 98, 0, 0, 1002, 21, 125, 20, 4, 20, 1105, 1, 46, 104,999, 1105, 1, 46, 1101, 1000, 1, 20, 4, 20, 1105, 1, 46, 98, 99", 7, 999)]
+        [InlineData("3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106, 0, 36, 98, 0, 0, 1002, 21, 125, 20, 4, 20, 1105, 1, 46, 104,999, 1105, 1, 46, 1101, 1000, 1, 20, 4, 20, 1105, 1, 46, 98, 99", 8, 1000)]
+        [InlineData("3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106, 0, 36, 98, 0, 0, 1002, 21, 125, 20, 4, 20, 1105, 1, 46, 104,999, 1105, 1, 46, 1101, 1000, 1, 20, 4, 20, 1105, 1, 46, 98, 99", 9, 1001)]
+        public void handles_larger_sample(string program, int input, int expOutput)
+        {
+            var output = new List<int>();
+
+            Day5.Execute(program, new Queue<int>(new[] { input }), output);
+
+            Assert.Equal(expOutput, output.Last());
+        }
+
         [Fact]
-        public void can_solve_puzzle()
+        public void can_solve_part_1()
         {
             var program = Day5.Parse(Input.Day(5));
 
             var input = new Queue<int>(new[] { 1 });
             var output = new List<int>();
-            
+
             var result = Day5.Execute(program, input, output);
 
             output.ForEach(Console.WriteLine);
             Assert.Equal(9938601, output.Last());
+        }
+
+        [Fact]
+        public void can_solve_part_2()
+        {
+            var program = Day5.Parse(Input.Day(5));
+
+            var input = new Queue<int>(new[] { 5 });
+            var output = new List<int>();
+
+            var result = Day5.Execute(program, input, output);
+
+            output.ForEach(Console.WriteLine);
+            Assert.Equal(4283952, output.Last());
         }
     }
 }

@@ -59,11 +59,74 @@ namespace AdventOfCode
             }
         }
 
+        internal class LessThan: OpCode
+        {
+            public LessThan(int code) : base(code)
+            {
+
+            }
+
+            public override int Execute(int[] program, int currentPosition)
+            {
+                var first = GetParameterValue(1, currentPosition, program);
+                var second = GetParameterValue(2, currentPosition, program);
+                var updated = SetParameterValue(3, currentPosition, (first < second ? 1 : 0), program);
+                return updated == currentPosition ? program[currentPosition] : currentPosition + 4;
+            }
+        }
+
+        internal class Equality : OpCode
+        {
+            public Equality(int code) : base(code)
+            {
+
+            }
+
+            public override int Execute(int[] program, int currentPosition)
+            {
+                var first = GetParameterValue(1, currentPosition, program);
+                var second = GetParameterValue(2, currentPosition, program);
+                var updated = SetParameterValue(3, currentPosition, first == second ? 1 : 0, program);
+                return updated == currentPosition ? program[currentPosition] : currentPosition + 4;
+            }
+        }
+
+        internal class JumpIfTrue : OpCode
+        {
+            public JumpIfTrue(int code) : base(code)
+            {
+
+            }
+
+            public override int Execute(int[] program, int currentPosition)
+            {
+                return (GetParameterValue(1, currentPosition, program) != 0)
+                    ? GetParameterValue(2, currentPosition, program)
+                    : currentPosition + 3;
+            }
+        }
+
+        internal class JumpIfFalse : OpCode
+        {
+            public JumpIfFalse(int code) : base(code)
+            {
+
+            }
+
+            public override int Execute(int[] program, int currentPosition)
+            {
+                return (GetParameterValue(1, currentPosition, program) == 0)
+                    ? GetParameterValue(2, currentPosition, program)
+                    : currentPosition + 3;
+            }
+        }
+
+
         public abstract class OpCode
         {
             protected Queue<int> Input;
             protected List<int> Output;
-            
+
             internal const int PositionMode = 0;
             internal const int End = 99;
 
@@ -86,18 +149,24 @@ namespace AdventOfCode
             {
                 var chars = value.ToString("D5").ToCharArray();
                 var code = (int)char.GetNumericValue(chars[4]);
-                
-                input ??= new Queue<int>();
-                output ??= new List<int>();
 
-                return code switch
+                OpCode op = code switch
                 {
-                    1 => new Add(value) { Input = input, Output = output },
-                    2 => new Multiply(value) { Input = input, Output = output },
-                    3 => new Input(value) { Input = input, Output = output },
-                    4 => new Output(value) { Input = input, Output = output },
+                    1 => new Add(value),
+                    2 => new Multiply(value),
+                    3 => new Input(value),
+                    4 => new Output(value),
+                    5 => new JumpIfTrue(value),
+                    6 => new JumpIfFalse(value),
+                    7 => new LessThan(value),
+                    8 => new Equality(value),
                     _ => null,
                 };
+
+                op.Input = input ?? new Queue<int>();
+                op.Output = output ?? new List<int>();
+
+                return op;
             }
 
             public abstract int Execute(int[] program, int currentPosition);
@@ -109,21 +178,21 @@ namespace AdventOfCode
                 return mode == PositionMode ? program[program[index]] : program[index];
             }
 
-            protected void SetParameterValue(int paramNum, int currentPosition, int value, int[] program)
+            protected int SetParameterValue(int paramNum, int currentPosition, int value, int[] program)
             {
                 var mode = ParamModes[paramNum - 1];
                 var index = currentPosition + paramNum;
-                if (mode == PositionMode)
-                {
-                    program[program[index]] = value;
-                }
-                else
-                {
-                    program[index] = value;
-                }
+                var updated = mode == PositionMode
+                    ? program[index]
+                    : index;
+
+                program[updated] = value;
+
+                return updated;
+
             }
         }
-        
+
         public static int[] Parse(string input) => input
                 .Split(',')
                 .Select(int.Parse)
