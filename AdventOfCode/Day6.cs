@@ -8,32 +8,37 @@ namespace AdventOfCode
     {
         public class Map
         {
-            public int Checksum { get; private set; }
+            public int Checksum
+            {
+                get
+                {
+                    var sum = 0;
+
+                    foreach (var kvp in _orbits)
+                    {
+                        sum++;
+                        var next = kvp.Value;
+                        while (_orbits.ContainsKey(next))
+                        {
+                            sum++;
+                            next = _orbits[next];
+                        }
+                    }
+
+                    return sum;
+                }
+            }
+
+            private readonly Dictionary<string, string> _orbits;
 
             public Map(string input)
             {
-                var orbits = input.Split('\n').Select(Parse).ToList();
-                var level = new HashSet<string>() { "COM" };
-                var depth = 0;
-                var sum = 0;
-
-                while (level.Count > 0)
-                {
-                    depth++;
-                    level = orbits
-                        .Where(orbit => level.Contains(orbit.orbited))
-                        .Select(orbit => orbit.orbiter)
-                        .ToHashSet();
-                    sum += depth * level.Count();
-                }
-
-                Checksum = sum;
+                _orbits = new Dictionary<string, string>(input.Split('\n').Select(Parse));
             }
 
-            private (string orbited, string orbiter) Parse(string line)
+            private KeyValuePair<string, string> Parse(string line)
             {
-                var split = line.Split(')');
-                return (split[0], split[1].Trim());
+                return new KeyValuePair<string, string>(line.Split(')')[1].Trim(), line.Split(')')[0]);
             }
         }
     }
