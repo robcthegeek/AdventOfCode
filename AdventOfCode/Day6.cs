@@ -29,6 +29,28 @@ namespace AdventOfCode
                 }
             }
 
+            public int TransfersRequired(string a, string b)
+            {
+                var san = Route("SAN", "COM");
+                var you = Route("YOU", "COM");
+                var intersect = san.Intersect(you).ToHashSet();
+                return san.Count + you.Count - (2 * intersect.Count);
+            }
+
+            private HashSet<string> Route(string from, string to)
+            {
+                var result = new HashSet<string>();
+
+                var next = _orbits[from];
+                while (next != to)
+                {
+                    result.Add(next);
+                    next = _orbits[next];
+                }
+
+                return result;
+            }
+
             private readonly Dictionary<string, string> _orbits;
 
             public Map(string input)
